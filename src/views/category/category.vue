@@ -1,91 +1,88 @@
 <template>
-  <div class="content">
-  <ul>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-    <li>分类</li>
-  </ul>
+  <div class="category">
+
+      <categoryLeft :list="list" @categoryright="getcategoryright"
+      class="categoryLeft"></categoryLeft>
+
+        <categoryRight :info="info" class="categoryRight"></categoryRight>
+
+
   </div>
 </template>
 
 <script>
-  import BScroll from 'better-scroll'
+  import {getcategory,getcategoryInfo} from 'network/category.js';
+  import categoryLeft from './childComps/categoryLeft.vue'
+  import categoryRight from './childComps/categoryRight.vue'
+  import Scroll from 'components/common/scroll/Scroll.vue'
   export default {
     name:'category',
-   data() {
-     return {
-       scroll:null
-     }
-   },
-   mounted() {
-     this.scroll = new BScroll(document.querySelector('.content'),{
-       probeType: 3,
-       pullUpLoad:true
-     })
-     this.scroll.on('scroll', (position) => {
-       console.log(position)
-     })
-     this.scroll.on('pullingUp', () => {
-       console.log('sgang')
-     })
-   }
+    components:{
+      categoryLeft,
+      categoryRight,
+      Scroll
+
+    },
+    data() {
+      return{
+        list:[],
+        maitKey:3627,
+        info:[]
+      }
+    },
+    created() {
+      this.getcategory();
+      getcategoryInfo(this.maitKey).then(res=>{
+          console.log(res)
+          this.info = res.data.data.list
+        })
+    },
+    methods:{
+      getcategory() {
+        getcategory().then(res=>{
+          console.log(res)
+          this.list = res.data.data.category.list
+        })
+      },
+      getcategoryright(index) {
+        const maitKey = this.list[index].maitKey
+        this.maitKey = maitKey
+        getcategoryInfo(this.maitKey).then(res=>{
+          console.log(res)
+          this.info = res.data.data.list
+        })
+      },
+      // imageLoad() {
+      //   this.$refs.scroll.scroll.refresh()
+      // }
+
+    }
   }
+
+
 
 </script>
 
 <style>
-  .content {
-    height: 250px;
-    background-color: #0074D9;
-    /* overflow: hidden; */
-   /* overflow-y: scroll; */
+  .category{
+    width: 100%;
+    display: flex;
+    height: 100vh;
   }
+  .categoryLeft{
+    width: 25%;
+  }
+  .categoryRight{
+    width: 75%;
+    /* display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center; */
+  }
+  /* .content{
+    width: 100%;
+    height: calc(100% - 49px);
+  } */
+
+
 </style>
